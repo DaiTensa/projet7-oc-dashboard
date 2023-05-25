@@ -8,17 +8,10 @@ import json
 import plotly.graph_objects as go
 import pandas as pd
 
-# id_test = 100038
-# Local
-url_server = 'http://127.0.0.1:5000'
-
-#Online
-# url_server = 'https://scoringapp.pythonanywhere.com'
-
-
+url_server = 'https://scoringapp.pythonanywhere.com'
 liste_ids = requests.get(f'{url_server}/listeidclients')
 liste_columns_names = requests.get(f'{url_server}/listecolumnsnames')
-# shap = requests.get(f'{url_server}/shape/{id_test}')
+
 
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
