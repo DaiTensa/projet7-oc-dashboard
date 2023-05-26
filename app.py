@@ -8,8 +8,21 @@ import json
 import plotly.graph_objects as go
 import pandas as pd
 
+# Test
+# id_test = 100038
+# shap = requests.get(f'{url_server}/shape/{id_test}')
+
+
+
+
+
+
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
+# Local
+# url_server = 'http://127.0.0.1:5000'
+
+#Online
 url_server = 'https://scoringapp.pythonanywhere.com'
 liste_ids = requests.get(f'{url_server}/listeidclients')
 liste_columns_names = requests.get(f'{url_server}/listecolumnsnames')
@@ -104,20 +117,6 @@ resume_data_client = dbc.Container([
     ]),
 ])
 
-
-simulation_data_client = dbc.Container([
-    dbc.Row([
-        dbc.Col([
-            html.H3('Simulation Crédit'),
-            html.Br(),
-            html.Div(children = [
-                html.P("Ici Afficher résultat de la prédiction sous forme d'une jauge"),
-                ],id='simulation-data-client-output'),
-        ])
-    ]),
-])
-
-
 data_du_client = html.Div(children=[
     dash_table.DataTable(
         id="table",
@@ -146,8 +145,6 @@ shape_values_client = html.Div(children=[
     className="dbc-row-selectable", id="shape-data-frame-client"
 )
 
-
-
 describe_data_du_client = html.Div(children=[
     dash_table.DataTable(
         id="table-describe-data-client",
@@ -162,31 +159,47 @@ describe_data_du_client = html.Div(children=[
     className="dbc-row-selectable", id="describe-data-frame-client"
 )
 
-
 graphique_shape_values = html.Div(
     children=[
         html.H1('Graphique des Shape Values'),
         dcc.Graph(
             id='shape-values-graph',
             figure={
-                # 'data': [
-                #     go.Bar(
-                #         x=shap_df.columns,
-                #         y=shap_df.iloc[i],
-                #         name=f'Shape Values {i+1}'
-                #     ) for i in range(len(shap_df))
-                # ],
-                # 'layout': go.Layout(
-                #     title='Shape Values',
-                #     xaxis={'title': 'Features'},
-                #     yaxis={'title': 'Shape Values'},
-                #     barmode='group'
-                # )
+
             }
         )
     ],
     id="graph-shape-values"
 )
+
+
+decision = "Solvable"
+graphique_jauge_proba = html.Div(
+    children=[
+        html.H3('Simulation Crédit'),
+        html.P(f"Le client : {decision}", id="decision-id"),
+        dcc.Graph(
+            id='proba-solvable',
+            figure={
+
+            }
+        )
+    ],
+    id="graph-proba",
+)
+
+simulation_data_client = dbc.Container([
+    dbc.Row([
+        dbc.Col([
+            # html.H3('Simulation Crédit'),
+            # html.Br(),
+            # html.Div(children = [
+            #     html.P("Ici Afficher résultat de la prédiction sous forme d'une jauge"),
+            #     ],id='simulation-data-client-output'),
+            graphique_jauge_proba
+        ])
+    ]),
+])
 
 
 tab1 = dbc.Tab([data_du_client], label="Table", className="p-4", id="data-client")
@@ -345,6 +358,42 @@ def return_shape_graph_client(value):
                     )
                 }
             return figure
+        
+# graphique proba jauge
+@app.callback(
+    Output('proba-solvable', "figure"),
+    Output('decision-id', "children"),
+    [Input('dropdown-selection', "value")]
+)
+def return_jauge_proba(value):
+    if value:
+        response_pred_client = requests.get(f'{url_server}/proba/{value}')
+        if response_pred_client.ok:
+            response_json = response_pred_client.json()
+            proba = response_json["proba"]
+            seuil = response_json["seuil"]
+            decision = 'Le client est Solvable' if proba>seuil else 'Le client est Non solvable'
+            figure=go.Figure(go.Indicator(
+                mode = "number+gauge+delta", value = proba,
+                domain = {'x': [1, 1], 'y': [1, 1]},
+                # title = {'text' :f"{decision}"},
+                delta = {'reference': 1},
+                gauge = {
+                    'shape': "bullet",
+                    'axis': {'range': [None, 1]},
+                    'threshold': {
+                        'line': {'color': "red", 'width': 2},
+                        'thickness': 0.75,
+                        'value': 0.5},
+                    'steps': [
+                        {'range': [0, 0.45], 'color': "lightgray"},
+                        {'range': [0.45,0.5 ], 'color': "gray"},
+                        {'range': [0.5,1 ], 'color': "#3dfc98"},
+                        
+                        ]}))
+            figure.update_layout(height = 230)
+                            
+            return figure, decision
 
 # retrun résumé data client
 @app.callback(
@@ -376,15 +425,17 @@ def return_resume_client(value):
                 ],id='resume-data-client-output')
 
 # return probabilité de rembourser le crédit
-@app.callback(
-    Output(component_id='simulation-data-client-output', component_property='children'),
-    [Input(component_id='dropdown-selection', component_property='value')],
-)
-def get_proba_client(value):
-        response_pred_client = requests.get(f'{url_server}/prediction/{value}')
-        return (html.Div(children = [
-                html.P(f"Ici Afficher résultat de la prédiction sous forme d'une jauge, {response_pred_client.text}"),
-                ],id='simulation-data-client-output'))
+# @app.callback(
+#     Output(component_id='simulation-data-client-output', component_property='children'),
+#     [Input(component_id='dropdown-selection', component_property='value')],
+# )
+# def get_proba_client(value):
+#         response_pred_client = requests.get(f'{url_server}/proba/{value}')
+#         response_json = response_pred_client.json()
+#         proba = response_json['proba']
+#         return (html.Div(children = [
+#                 html.P(f"Ici Afficher résultat de la prédiction sous forme d'une jauge, {response_pred_client.text}, {type(response_json)}, {type(proba)}"),
+#                 ],id='simulation-data-client-output'))
         
         
 
