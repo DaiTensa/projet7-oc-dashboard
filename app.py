@@ -437,7 +437,7 @@ def return_resume_client(value):
 #                 html.P(f"Ici Afficher résultat de la prédiction sous forme d'une jauge, {response_pred_client.text}, {type(response_json)}, {type(proba)}"),
 #                 ],id='simulation-data-client-output'))
         
-        
+# pour test  
 
 app.layout = html.Div([
     html.Div(children=[
