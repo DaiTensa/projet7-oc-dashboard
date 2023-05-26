@@ -29,13 +29,13 @@ liste_columns_names = requests.get(f'{url_server}/listecolumnsnames')
 
 header = dbc.NavbarSimple(
     children=[
-        dbc.NavItem(dbc.NavLink("Acceuil Projet", href="#")),
-        dbc.NavItem(dbc.NavLink("GitHub", href="#")),
+        dbc.NavItem(dbc.NavLink("Acceuil Projet", href="https://github.com/DaiTensa/projetscoring")),
+        dbc.NavItem(dbc.NavLink("GitHub", href="https://github.com/DaiTensa/projet7-oc-dashboard")),
         dbc.DropdownMenu(
             children=[
                 dbc.DropdownMenuItem("Choix...", header=True, href="#"),
                 dbc.DropdownMenuItem("Fonctionnalités", header=False, href="#"),
-                dbc.DropdownMenuItem("Data Client", header=False, href="#"),
+                dbc.DropdownMenuItem("Data Client", header=False, href="https://github.com/DaiTensa/dashboard/blob/main/reduced_test.csv"),
                 dbc.DropdownMenuItem("Simulation Crédit", header=False, href="#"),
             ],
             nav=True,
