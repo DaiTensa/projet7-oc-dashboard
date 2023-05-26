@@ -8,13 +8,11 @@ import json
 import plotly.graph_objects as go
 import pandas as pd
 
+app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
+
 url_server = 'https://scoringapp.pythonanywhere.com'
 liste_ids = requests.get(f'{url_server}/listeidclients')
 liste_columns_names = requests.get(f'{url_server}/listecolumnsnames')
-
-
-
-app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
 header = dbc.NavbarSimple(
     children=[
@@ -42,7 +40,7 @@ identification_client_container = dbc.Container([
     dbc.Row([
         dbc.Col([
             html.H4('ID Client'),
-            dcc.Dropdown(options=liste_ids.json(), id='dropdown-selection', style={'width': '190px'}),
+            dcc.Dropdown(options=liste_ids.json(), id='dropdown-selection', style={'width': '190px'}, value=100038),
             html.Br(),
             html.Div(id='dropdown-id-input'),
             ])
