@@ -162,6 +162,7 @@ describe_data_du_client = html.Div(children=[
 graphique_shape_values = html.Div(
     children=[
         html.H1('Graphique des Shape Values'),
+        dcc.Dropdown(options=[5,10,15,20,30], id='dropdown-profondeur-shape', style={'width': '190px'}, value=0),
         dcc.Graph(
             id='shape-values-graph',
             figure={
@@ -231,7 +232,7 @@ left_section = dbc.Container(
 
 right_section = dbc.Container(
     [
-        resultats_client_container
+        simulation_data_client
     ],
     className="mt-2"
 )
@@ -245,13 +246,13 @@ left_section_down = dbc.Container(
 
 right_section_down = dbc.Container(
     [
-        simulation_data_client
+        resultats_client_container
     ],
     className="mt-2"
 )
 
 sections_row = dbc.Row([dbc.Col(left_section, width=4), dbc.Col(right_section, width=7)])
-sections_row_down = dbc.Row([dbc.Col(left_section_down, width=4), dbc.Col(right_section_down, width=4)])
+sections_row_down = dbc.Row([dbc.Col(left_section_down, width=4), dbc.Col(right_section_down, width=7)])
 
 ### CallBack ###
 
@@ -335,20 +336,26 @@ def return_shape_client(value):
 # les shap values sous frome de graph
 @app.callback(
     Output('shape-values-graph', "figure"),
-    [Input('dropdown-selection', "value")]
+    [Input('dropdown-selection', "value")],
+    [Input('dropdown-profondeur-shape', "value")]
 )
-def return_shape_graph_client(value):
-    if value:
-        response_df_shape_client = requests.get(f'{url_server}/shape/{value}')
+def return_shape_graph_client(value_id, value_deep):
+    if value_id:
+        response_df_shape_client = requests.get(f'{url_server}/shape/{value_id}')
         if response_df_shape_client.ok:
             df_shape_client_json = response_df_shape_client.json()
             df_shape_client = pd.DataFrame.from_dict(df_shape_client_json)
+            df_shape_client = df_shape_client.sort_values(by=["features_importance_abs"], ascending=False)
+            df_shape_client = df_shape_client.head(value_deep)
+            colors = ['rgb(58, 0, 255)' if val > 0 else 'rgb(255, 0, 0)' for val in df_shape_client['shape_values']]           
             figure={
                 'data': [
                     go.Bar(
-                        x=df_shape_client['Features'],
-                        y=df_shape_client['shape_values'],
-                        name='Shape Values'
+                        x= df_shape_client['Features'],
+                        y= df_shape_client['shape_values'],
+                        name='Shape Values',
+                        marker=dict(color=colors),
+                        # orientation='h'
                         )
                     ],
                 'layout': go.Layout(
@@ -375,7 +382,7 @@ def return_jauge_proba(value):
             decision = 'Le client est Solvable' if proba>seuil else 'Le client est Non solvable'
             figure=go.Figure(go.Indicator(
                 mode = "number+gauge+delta", value = proba,
-                domain = {'x': [1, 1], 'y': [1, 1]},
+                domain = {'x': [0, 0], 'y': [0, 0]},
                 # title = {'text' :f"{decision}"},
                 delta = {'reference': 1},
                 gauge = {
@@ -387,11 +394,11 @@ def return_jauge_proba(value):
                         'value': 0.5},
                     'steps': [
                         {'range': [0, 0.45], 'color': "lightgray"},
-                        {'range': [0.45,0.5 ], 'color': "gray"},
-                        {'range': [0.5,1 ], 'color': "#3dfc98"},
+                        {'range': [0.45,0.6], 'color': "rgb(249, 148, 11)"},
+                        {'range': [0.6,1 ], 'color': "rgb(0, 231, 105)"},
                         
                         ]}))
-            figure.update_layout(height = 230)
+            figure.update_layout(height = 260)
                             
             return figure, decision
 
@@ -424,20 +431,7 @@ def return_resume_client(value):
                 html.P(f"AMT_GOODS_PRICE :  {goodsprice}"),
                 ],id='resume-data-client-output')
 
-# return probabilité de rembourser le crédit
-# @app.callback(
-#     Output(component_id='simulation-data-client-output', component_property='children'),
-#     [Input(component_id='dropdown-selection', component_property='value')],
-# )
-# def get_proba_client(value):
-#         response_pred_client = requests.get(f'{url_server}/proba/{value}')
-#         response_json = response_pred_client.json()
-#         proba = response_json['proba']
-#         return (html.Div(children = [
-#                 html.P(f"Ici Afficher résultat de la prédiction sous forme d'une jauge, {response_pred_client.text}, {type(response_json)}, {type(proba)}"),
-#                 ],id='simulation-data-client-output'))
-        
-# pour test  
+
 
 app.layout = html.Div([
     html.Div(children=[
