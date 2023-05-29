@@ -379,6 +379,9 @@ def return_shape_graph_client(value_id, value_deep):
                 }
             return figure
         
+        
+        # Test python
+        
 # graphique proba jauge
 @app.callback(
     Output('proba-solvable', "figure"),
