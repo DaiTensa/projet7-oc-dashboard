@@ -39,14 +39,14 @@ jobs:
           command: pytest tests.py
   deploy:
     docker:
-        - image: cimg/python:3.10.2
+      - image: cimg/python:3.10.2
     steps:
-    - chekout
-    - run : 
-    name: Deploy Over SSH
-    command: |
-    ssh-keyscan -H ssh.pythonanywhere.com >> ~/.ssh/known_hosts
-    ssh $SSH_USER@$SSH_HOST "cd projet7-oc-dashboard; git pull";
+      - chekout
+      - run :
+          name: Deploy Over SSH
+          command: |
+            ssh-keyscan -H ssh.pythonanywhere.com >> ~/.ssh/known_hosts
+            ssh $SSH_USER@$SSH_HOST "cd projet7-oc-dashboard; git pull";
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/configuration-reference/#workflows
 workflows:
