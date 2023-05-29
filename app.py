@@ -11,7 +11,7 @@ import pandas as pd
 # Test
 # id_test = 100038
 # shap = requests.get(f'{url_server}/shape/{id_test}')
-
+# Test modification CI 
 
 
 
@@ -380,7 +380,7 @@ def return_shape_graph_client(value_id, value_deep):
             return figure
         
         
-        # Test python
+    
         
 # graphique proba jauge
 @app.callback(
