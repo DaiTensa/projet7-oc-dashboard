@@ -41,7 +41,7 @@ jobs:
     docker:
       - image: cimg/python:3.10.2
     steps:
-      - chekout
+      - checkout
       - run :
           name: Deploy Over SSH
           command: |
