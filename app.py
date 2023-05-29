@@ -37,85 +37,99 @@ header = dbc.NavbarSimple(
                 dbc.DropdownMenuItem("Fonctionnalités", header=False, href="#"),
                 dbc.DropdownMenuItem("Data Client", header=False, href="https://github.com/DaiTensa/dashboard/blob/main/reduced_test.csv"),
                 dbc.DropdownMenuItem("Simulation Crédit", header=False, href="#"),
-            ],
+                ],
             nav=True,
             in_navbar=True,
             label="Fonctionnalités",
-        ),
-    ],
+            ),
+        ],
     brand="ScoringApp",
     brand_href="https://scoringdash.pythonanywhere.com",
     color="primary",
     dark=True,
-)
+    )
 
-identification_client_container = dbc.Container([
-    dbc.Row([
-        dbc.Col([
-            html.H4('ID Client'),
-            dcc.Dropdown(options=liste_ids.json(), id='dropdown-selection', style={'width': '190px'}, value=100038),
-            html.Br(),
-            html.Div(id='dropdown-id-input'),
-            ])
-        ]),
-    dbc.Row([
-        dbc.Col([
-            html.H3('Identification Client'),
-            dcc.Input(
-                id='nom_input',
-                value='',
-                type='text',
-                placeholder='Nom',
-                debounce=True,
-                ),
-            dcc.Input(
-                id='prenom_input',
-                value='',
-                type='text',
-                placeholder='Prénom',
-                debounce=True,
-                style={'margin-left': '0.5rem'}
-                ),
-            html.Br(),
-            html.Div(id='identification-client-output'),
-            ])
-        ]),
-    dbc.Row([
-        dbc.Col([
-            html.Br(),
-            dcc.Input(
-                id='input-info-3',
-                value='',
-                type='text',
-                placeholder='Info 3',
-                debounce=True
-                ),
-            dcc.Input(
-                id='input-info-4',
-                value='',
-                type='text',
-                placeholder='Info 4',
-                debounce=True,
-                style={'margin-left': '0.5rem'}
-                ),
-            html.Br(),
-            html.Div(id='identification-client-output-2'),
-            ])
-        ]),
-    
-    ])
+identification_client_container = dbc.Container(
+    [
+        dbc.Row(
+            [
+                dbc.Col(
+                    [
+                        html.H4('ID Client'),
+                        dcc.Dropdown(options=liste_ids.json(), id='dropdown-selection', style={'width': '190px'}, value=100038),
+                        html.Br(),
+                        html.Div(id='dropdown-id-input'),
+                        
+                    ]
+                    )
+                ]
+            ),
+        dbc.Row(
+            [
+                dbc.Col(
+                    [
+                        html.H3('Identification Client'),
+                        dcc.Input(
+                            id='nom_input',
+                            value='',
+                            type='text',
+                            placeholder='Nom',
+                            debounce=True,
+                            ),
+                        dcc.Input(
+                            id='prenom_input',
+                            value='',
+                            type='text',
+                            placeholder='Prénom',
+                            debounce=True,
+                            style={'margin-left': '0.5rem'}
+                            ),
+                        html.Br(),
+                        html.Div(id='identification-client-output'),
+                        ])
+                ]),
+        dbc.Row(
+            [
+                dbc.Col(
+                    [
+                        html.Br(),
+                        dcc.Input(
+                            id='input-info-3',
+                            value='',
+                            type='text',
+                            placeholder='Info 3',
+                            debounce=True
+                            ),
+                        dcc.Input(
+                            id='input-info-4',
+                            value='',
+                            type='text',
+                            placeholder='Info 4',
+                            debounce=True,
+                            style={'margin-left': '0.5rem'}
+                            ),
+                        html.Br(),
+                        html.Div(id='identification-client-output-2'),
+                        ]
+                    )
+                ]),
+            
+                ])
 
-resume_data_client = dbc.Container([
-    dbc.Row([
-        dbc.Col([
-            html.H3('Résumé Informations Client'),
-            html.Br(),
-            html.Div(children = [
-                html.P("Résumé"),
-                ],id='resume-data-client-output'),
+resume_data_client = dbc.Container(
+    [
+        dbc.Row(
+            [
+                dbc.Col(
+                    [
+                        html.H3('Résumé Informations Client'),
+                        html.Br(),
+                        html.Div(children=[
+                            html.P("Résumé"),
+                            ],id='resume-data-client-output'),
+                        ])
+                ]),
         ])
-    ]),
-])
 
 data_du_client = html.Div(children=[
     dash_table.DataTable(
@@ -128,8 +142,8 @@ data_du_client = html.Div(children=[
         style_table={"overflowX": "auto"},
         # row_selectable="multi",
     )],
-    className="dbc-row-selectable", id="data-frame-client"
-)
+                          className="dbc-row-selectable", id="data-frame-client"
+                          )
 
 shape_values_client = html.Div(children=[
     dash_table.DataTable(
@@ -142,8 +156,8 @@ shape_values_client = html.Div(children=[
         style_table={"overflowX": "auto", "overflowY": "auto"},
         # row_selectable="multi",
     )],
-    className="dbc-row-selectable", id="shape-data-frame-client"
-)
+                               className="dbc-row-selectable", id="shape-data-frame-client"
+                               )
 
 describe_data_du_client = html.Div(children=[
     dash_table.DataTable(
@@ -156,22 +170,21 @@ describe_data_du_client = html.Div(children=[
         style_table={"overflowX": "auto", "overflowY": "scroll"},
         # row_selectable="multi",
     )],
-    className="dbc-row-selectable", id="describe-data-frame-client"
-)
+                                   className="dbc-row-selectable", id="describe-data-frame-client"
+                                   )
 
-graphique_shape_values = html.Div(
-    children=[
-        html.H1('Graphique des Shape Values'),
-        dcc.Dropdown(options=[5,10,15,20,30], id='dropdown-profondeur-shape', style={'width': '190px'}, value=0),
-        dcc.Graph(
-            id='shape-values-graph',
-            figure={
-
-            }
+graphique_shape_values = html.Div(children=[
+    html.H1('Graphique des Shape Values'),
+    dcc.Dropdown(options=[5,10,15,20,30], id='dropdown-profondeur-shape', style={'width': '190px'}, value=0),
+    dcc.Graph(
+        id='shape-values-graph',
+        figure={
+            
+                        }
         )
     ],
-    id="graph-shape-values"
-)
+                                  id="graph-shape-values"
+                                  )
 
 
 decision = "Solvable"
