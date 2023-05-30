@@ -1,5 +1,5 @@
 import pytest
-from src.pipeline.predict_pipeline import DataClient
+from predict_pipeline import DataClient
 
 
 data_clients = DataClient()
