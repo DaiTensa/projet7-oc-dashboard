@@ -1,8 +1,5 @@
-import pytest
 import pandas as pd
 
-
-@pytest.mark.infos_clients
 def test_infos_du_client():
     clients_data__path = "https://raw.githubusercontent.com/DaiTensa/dashboard/main/reduced_test.csv"
     data_clients = pd.read_csv(clients_data__path)
