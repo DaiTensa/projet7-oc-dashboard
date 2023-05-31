@@ -46,7 +46,7 @@ jobs:
           name: Deploy Over SSH
           command: |
             ssh-keyscan -H ssh.pythonanywhere.com >> ~/.ssh/known_hosts
-            ssh $SSH_USER@$SSH_HOST "cd projet7-oc-dashboard; git pull; /home/scoringdash/projet7-oc-dashboard/reload.sh"";
+            ssh $SSH_USER@$SSH_HOST "cd projet7-oc-dashboard; git pull; /home/scoringdash/projet7-oc-dashboard/reload.sh";
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/configuration-reference/#workflows
 workflows:
