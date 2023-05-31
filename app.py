@@ -190,7 +190,7 @@ graphique_shape_values = html.Div(children=[
 decision = "Solvable"
 graphique_jauge_proba = html.Div(
     children=[
-        html.H3('Simulation Crédit Test 6'),
+        html.H3('Simulation Crédit Test 7'),
         html.P(f"Le client : {decision}", id="decision-id"),
         dcc.Graph(
             id='proba-solvable',
