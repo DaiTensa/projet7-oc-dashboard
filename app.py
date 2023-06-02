@@ -14,10 +14,11 @@ import pandas as pd
 # Test modification CI 
 
 
+# stylesheet with the .dbc class
+dbc_css = "https://cdn.jsdelivr.net/gh/AnnMarieW/dash-bootstrap-templates/dbc.min.css"
 
 
-
-app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
+app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP, dbc_css])
 
 # Local
 # url_server = 'http://127.0.0.1:5000'
@@ -113,7 +114,9 @@ identification_client_container = dbc.Container(
                         ]
                     )
                 ]),
-            
+        html.Br(),
+        dbc.Button("Rechercher", id="example-button", className="me-2", n_clicks=0),
+               
                 ])
 
 resume_data_client = dbc.Container(
@@ -174,7 +177,8 @@ describe_data_du_client = html.Div(children=[
                                    )
 
 graphique_shape_values = html.Div(children=[
-    html.H1('Graphique des Shape Values'),
+    # html.H1('Graphique des Shape Values'),
+    dbc.Label("Max display (nombre de features)", className="bg-transparent"),
     dcc.Dropdown(options=[5,10,15,20,30], id='dropdown-profondeur-shape', style={'width': '190px'}, value=0),
     dcc.Graph(
         id='shape-values-graph',
@@ -182,16 +186,15 @@ graphique_shape_values = html.Div(children=[
             
                         }
         )
-    ],
-                                  id="graph-shape-values"
+    ],id="graph-shape-values", className="mb-4"
                                   )
 
 
-decision = "Solvable"
+decision = ""
 graphique_jauge_proba = html.Div(
     children=[
-        html.H3('Simulation Crédit Test 7'),
-        html.P(f"Le client : {decision}", id="decision-id"),
+        html.H3('Simulation Crédit'),
+        html.P(children = f"Le client : {decision}", id="decision-id", style={'textAlign': 'left','color': 'orange','fontSize': 40}),
         dcc.Graph(
             id='proba-solvable',
             figure={
@@ -395,10 +398,10 @@ def return_jauge_proba(value):
             response_json = response_pred_client.json()
             proba = response_json["proba"]
             seuil = response_json["seuil"]
-            decision = 'Le client est Solvable' if proba>seuil else 'Le client est Non solvable'
+            decision = 'Le client est : Solvable' if proba>seuil else 'Le client est : Insolvable'
             figure=go.Figure(go.Indicator(
                 mode = "number+gauge+delta", value = proba,
-                domain = {'x': [0, 0], 'y': [0, 0]},
+                domain = {'x': [0, 1], 'y': [0, 1]},
                 # title = {'text' :f"{decision}"},
                 delta = {'reference': 1},
                 gauge = {
@@ -414,7 +417,7 @@ def return_jauge_proba(value):
                         {'range': [0.6,1 ], 'color': "rgb(0, 231, 105)"},
                         
                         ]}))
-            figure.update_layout(height = 260)
+            figure.update_layout(width = 700 , height = 250)
                             
             return figure, decision
 
@@ -440,11 +443,11 @@ def return_resume_client(value):
             goodsprice = df_client['AMT_GOODS_PRICE'][0]
 
             return html.Div(children = [
-                html.P(f"Genre : {sex}"),
-                html.P(f"Income :  {income}"),
-                html.P(f"AMT_CREDIT :  {credit}"),
-                html.P(f"AMT_ANNUITY :  {annuity}"),
-                html.P(f"AMT_GOODS_PRICE :  {goodsprice}"),
+                html.P(f"Genre : {sex}", style={'textAlign': 'left','color': '#9520f9','fontSize': 20}, className="bg-light"),
+                html.P(f"Income :  {income}", style={'textAlign': 'left','color': '#9520f9','fontSize': 20}, className="bg-light"),
+                html.P(f"AMT_CREDIT :  {credit}", style={'textAlign': 'left','color': '#9520f9','fontSize': 20}, className="bg-light"),
+                html.P(f"AMT_ANNUITY :  {annuity}", style={'textAlign': 'left','color': '#9520f9','fontSize': 20}, className="bg-light"),
+                html.P(f"AMT_GOODS_PRICE :  {goodsprice}", style={'textAlign': 'left','color': '#9520f9','fontSize': 20}, className="bg-light"),
                 ],id='resume-data-client-output')
 
 
