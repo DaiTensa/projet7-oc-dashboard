@@ -20,10 +20,10 @@ dbc_css = "https://cdn.jsdelivr.net/gh/AnnMarieW/dash-bootstrap-templates/dbc.mi
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP, dbc_css])
 
-# Local
+# Local : pour run le dashboard en mode local, run l'API préalablement (voir les instruction dans le dossier projet7-oc-api)
 # url_server = 'http://127.0.0.1:5000'
 
-#Online
+# Server
 url_server = 'https://scoringapp.pythonanywhere.com'
 liste_ids = requests.get(f'{url_server}/listeidclients')
 liste_columns_names = requests.get(f'{url_server}/listecolumnsnames')
@@ -189,6 +189,45 @@ graphique_shape_values = html.Div(children=[
     ],id="graph-shape-values", className="mb-4"
                                   )
 
+############################### Graphiques Client #####################################
+graphique_1 = html.Div(children=[
+
+    dcc.Graph(
+        id='graph-1',
+        figure={
+            
+                        }
+        )
+    ],id="div-graph-1", className="mb-4"
+                                  )
+
+
+
+graphique_2 = html.Div(children=[
+
+    dcc.Graph(
+        id='graph-2',
+        figure={
+            
+                        }
+        )
+    ],id="div-graph-2", className="mb-4"
+                                  )
+
+graphique_3 = html.Div(children=[
+
+    dcc.Graph(
+        id='graph-3',
+        figure={
+            
+                        }
+        )
+    ],id="div-graph-3", className="mb-4"
+                                  )
+
+
+#######################################################################################
+
 
 decision = ""
 graphique_jauge_proba = html.Div(
@@ -223,7 +262,14 @@ tab1 = dbc.Tab([data_du_client], label="Table", className="p-4", id="data-client
 tab2 = dbc.Tab([describe_data_du_client], className="p-4", label="Describe", id="describe-data")
 tab3 = dbc.Tab([shape_values_client], className="p-4", label="Détail Shape", id="shape-data")
 tab4 = dbc.Tab([graphique_shape_values], label="Graph Shape", className="p-4", id="shape-data-graph")
+
+tab5 = dbc.Tab([graphique_1], label="Graph_1", className="p-4", id="tab-graph-1")
+tab6 = dbc.Tab([graphique_2], label="Graph_2", className="p-4", id="tab-graph-2")
+tab7 = dbc.Tab([graphique_3], label="Graph_3", className="p-4", id="tab-graph-3")
+
 tabs = dbc.Card(dbc.Tabs([tab1, tab2, tab3, tab4]))
+tabs_graph = dbc.Card(dbc.Tabs([tab5, tab6, tab7]))
+
 
 resultats_client_container = dbc.Container([
     dbc.Row([
@@ -236,6 +282,78 @@ resultats_client_container = dbc.Container([
     ])
 ])
 
+
+################################################################
+
+controls = dbc.Card(
+    [
+        html.Div(
+            [
+                dbc.Label("X variable"),
+                dcc.Dropdown(
+                    id="x-variable",
+                    options=liste_columns_names.json(),
+                    value="AMT_CREDIT",
+                ),
+            ]
+        ),
+        html.Div(
+            [
+                dbc.Label("Y variable"),
+                dcc.Dropdown(
+                    id="y-variable",
+                    options=liste_columns_names.json(),
+                    value="AMT_ANNUITY",
+                ),
+            ]
+        ),
+        html.Div(
+            [
+                dbc.Label("Nombre de client"),
+                dbc.Input(id="cllient-count", type="number", value=0),
+            ]
+        ),
+        html.Div(
+            [
+                html.Br(),
+                dbc.Button("Afficher client", id="afficher-client", className="me-2", n_clicks=0),
+            ]
+        ),
+    ],
+    body=True,
+) 
+
+resume_data_client_var = dbc.Container(
+    [
+        dbc.Row(
+            [
+                dbc.Col(
+                    [
+                        html.H3('Informations Client Graph'),
+                        html.Br(),
+                        controls
+                        ]),
+                
+                ]),
+        ], fluid=True)
+
+
+resume_data_client_graph = dbc.Container(
+    [
+        dbc.Row(
+            [
+                dbc.Col(
+                    [
+                        html.H3('Visualisation'),
+                        html.Br(),
+                        tabs_graph
+                        ]),
+                
+                ]),
+        ], fluid=True)
+
+
+################################################################
 
 #### Séction et lignes #####
 
@@ -267,8 +385,23 @@ right_section_down = dbc.Container(
     className="mt-2"
 )
 
+right_section_down_down = dbc.Container(
+    [
+        resume_data_client_var
+    ],
+    className="mt-2"
+)
+
+left_section_down_down = dbc.Container(
+    [
+     resume_data_client_graph   
+    ],
+    className="mt-2"
+)
+
 sections_row = dbc.Row([dbc.Col(left_section, width=4), dbc.Col(right_section, width=7)])
 sections_row_down = dbc.Row([dbc.Col(left_section_down, width=4), dbc.Col(right_section_down, width=7)])
+sections_row_down_down = dbc.Row([dbc.Col(right_section_down_down, width=4), dbc.Col(left_section_down_down, width=7)])
 
 ### CallBack ###
 
@@ -381,10 +514,7 @@ def return_shape_graph_client(value_id, value_deep):
                     )
                 }
             return figure
-        
-        
-    
-        
+     
 # graphique proba jauge
 @app.callback(
     Output('proba-solvable', "figure"),
@@ -450,6 +580,63 @@ def return_resume_client(value):
                 html.P(f"AMT_GOODS_PRICE :  {goodsprice}", style={'textAlign': 'left','color': '#9520f9','fontSize': 20}, className="bg-light"),
                 ],id='resume-data-client-output')
 
+# client count 
+@app.callback(
+    Output("graph-1", "figure"),
+    [
+        Input("x-variable", "value"),
+        Input("y-variable", "value"),
+        Input("cllient-count", "value"),
+        Input(component_id='dropdown-selection', component_property='value'),
+        Input("afficher-client", "n_clicks")
+    ],
+)
+def make_graph(X, Y, n_cllient,id_client, n_clicks):
+    X = str(X)
+    Y = str(Y)
+    response_df_clients = requests.get(f'{url_server}/dataclients/{n_cllient}')
+    df_clients_json = response_df_clients.json()
+    df_clients = pd.DataFrame.from_dict(df_clients_json)
+    data_to_plot = df_clients.loc[:, [X,Y]]
+    figure={
+        'data': [
+            go.Scatter(
+                x= data_to_plot.loc[:, X],
+                y= data_to_plot.loc[:, Y],
+                name='Données Clients',
+                mode="markers",
+                marker={"size": 8}, 
+                )
+            ],
+        'layout': go.Layout(
+                    title=f'{X}--{Y}',
+                    xaxis={'title': X},
+                    yaxis={'title': Y}
+                    )
+                }
+    if n_clicks > 0:
+        response_df_client = requests.get(f'{url_server}/data/{id_client}')
+        df_client_json = response_df_client.json()
+        df_client = pd.DataFrame.from_dict(df_client_json)
+        df_client_to_plot = df_client.loc[:, [X, Y]]
+        graph_client = go.Scatter(
+            x=df_client_to_plot[X],
+            y=df_client_to_plot[Y],
+            name=f'Client : {id_client}',
+            mode="markers",
+            marker={"size": 10, "symbol": "star"}  # Changer le marker à votre convenance
+        )
+        figure['data'].append(graph_client)
+        
+    return figure
+
+
+        
+
+
+
+
+
 
 
 app.layout = html.Div([
@@ -457,6 +644,7 @@ app.layout = html.Div([
         header,
         sections_row,
         sections_row_down,
+        sections_row_down_down
     ])
 ])
 
