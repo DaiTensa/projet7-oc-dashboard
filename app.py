@@ -178,7 +178,7 @@ describe_data_du_client = html.Div(children=[
 
 graphique_shape_values = html.Div(children=[
     # html.H1('Graphique des Shape Values'),
-    dbc.Label("Max display (nombre de features)", className="bg-transparent"),
+    dbc.Label("Nombre de variables à afficher : ", className="bg-transparent"),
     dcc.Dropdown(options=[5,10,15,20,30], id='dropdown-profondeur-shape', style={'width': '190px'}, value=0),
     dcc.Graph(
         id='shape-values-graph',
@@ -265,10 +265,10 @@ tab4 = dbc.Tab([graphique_shape_values], label="Graph Shape", className="p-4", i
 
 tab5 = dbc.Tab([graphique_1], label="Graph_1", className="p-4", id="tab-graph-1")
 tab6 = dbc.Tab([graphique_2], label="Graph_2", className="p-4", id="tab-graph-2")
-tab7 = dbc.Tab([graphique_3], label="Graph_3", className="p-4", id="tab-graph-3")
+
 
 tabs = dbc.Card(dbc.Tabs([tab1, tab2, tab3, tab4]))
-tabs_graph = dbc.Card(dbc.Tabs([tab5, tab6, tab7]))
+tabs_graph = dbc.Card(dbc.Tabs([tab5, tab6]))
 
 
 resultats_client_container = dbc.Container([
@@ -496,7 +496,7 @@ def return_shape_graph_client(value_id, value_deep):
             df_shape_client = pd.DataFrame.from_dict(df_shape_client_json)
             df_shape_client = df_shape_client.sort_values(by=["features_importance_abs"], ascending=False)
             df_shape_client = df_shape_client.head(value_deep)
-            colors = ['rgb(58, 0, 255)' if val > 0 else 'rgb(255, 0, 0)' for val in df_shape_client['shape_values']]           
+            colors = ['rgb(58, 0, 255)' if val < 0 else 'rgb(255, 0, 0)' for val in df_shape_client['shape_values']]           
             figure={
                 'data': [
                     go.Bar(
